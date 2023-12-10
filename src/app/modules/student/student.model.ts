@@ -111,6 +111,14 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Local guardian information is required'],
     },
     profileImg: { type: String },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -128,14 +136,14 @@ studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
 
-//query middleware
-studentSchema.pre('find', async function (next) {
-  await this.find({ isDeleted: { $ne: true } });
+// query middleware
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-studentSchema.pre('findOne', async function (next) {
-  await this.find({ isDeleted: { $ne: true } });
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 
