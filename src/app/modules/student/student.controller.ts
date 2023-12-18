@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { StudentService } from './student.service';
+import { StudentServices } from './student.service';
 import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import httpStatus from 'http-status';
 
 const getAllStudents = catchAsync(async (req, res, next) => {
-  const result = await StudentService.getAllStudentFromDB();
+  const result = await StudentServices.getAllStudentFromDB();
   res.status(200).json({
     success: true,
     message: 'Student received successfully',
@@ -14,7 +16,7 @@ const getAllStudents = catchAsync(async (req, res, next) => {
 
 const getSingleStudent = catchAsync(async (req, res, next) => {
   const { studentId } = req.params;
-  const result = await StudentService.getSingleStudentFromDB(studentId);
+  const result = await StudentServices.getSingleStudentFromDB(studentId);
   res.status(200).json({
     success: true,
     message: 'Single student received successfully',
@@ -22,9 +24,22 @@ const getSingleStudent = catchAsync(async (req, res, next) => {
   });
 });
 
+const updateStudent = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const { student } = req.body;
+  const result = await StudentServices.updateStudentIntoDB(studentId, student);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student is updated successfully',
+    data: result,
+  });
+});
+
 const deleteSingleStudent = catchAsync(async (req, res, next) => {
   const { studentId } = req.params;
-  const result = await StudentService.deleteSingleStudentFromDB(studentId);
+  const result = await StudentServices.deleteSingleStudentFromDB(studentId);
   res.status(200).json({
     success: true,
     message: 'Single student deleted successfully',
@@ -32,8 +47,9 @@ const deleteSingleStudent = catchAsync(async (req, res, next) => {
   });
 });
 
-export const StudentController = {
+export const StudentControllers = {
   getAllStudents,
   getSingleStudent,
   deleteSingleStudent,
+  updateStudent,
 };

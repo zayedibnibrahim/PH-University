@@ -8,6 +8,7 @@ import { User } from './user.model';
 import { generateStudentId } from './user.utils';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   const userData: Partial<TUser> = {};
@@ -22,7 +23,9 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    userData.id = await generateStudentId(admissionSemester);
+    userData.id = await generateStudentId(
+      admissionSemester as TAcademicSemester,
+    );
 
     const newUser = await User.create([userData], { session });
 
